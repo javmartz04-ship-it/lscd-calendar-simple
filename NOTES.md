@@ -85,6 +85,45 @@ class ever runs at, say, 3pm any day — the grid shows that gap honestly).
 Did not touch `builds/lscd-calendar` (the "regular way" option) — this
 grid-first weekly view exists only in this simple variant.
 
+## Revision 3 — picture preview on top, correctly this time
+
+2026-08-31, same day. Final clarification, in the client's own written
+words (no longer dictated, unambiguous):
+> "When someone first opens the page, they want to immediately see the
+> full calendar displayed visually — almost like a calendar image or
+> preview. Then, underneath that calendar preview, visitors can access the
+> interactive options... Basically: calendar preview at the top,
+> interactive calendar/features below it."
+
+This is the picture-first structure from the very first attempt
+(`lscd-calendar-showcase`) — the thing that got rejected then wasn't the
+*structure*, it was that the preview images were screenshots of the old
+list-style weekly view. Now that the weekly view is a real time-grid
+calendar (Revision 2), the same picture-first structure is correct.
+
+Added, **in place on this same build/link** (no new repo — this is still
+Option 2, not a third option):
+- A `.preview` hero section before `#cal`: LSCD script wordmark, season
+  eyebrow, an emphasis-line headline ("Your whole season, *one calendar*."),
+  and two framed real screenshots — `assets/preview-weekly.png` (the
+  time-grid "This Week At A Glance") and `assets/preview-year.png` (the
+  month-grid School Year Calendar, August). Both captured from this same
+  file with headless Chromium + PIL crop (see `system/LESSONS.md`), cropped
+  to just their content (no duplicate header/tabs).
+- A "Browse the calendar yourself ↓" link scrolling to `#interactive`
+  (moved onto the existing `.cal-head`, no new element needed).
+- The interactive tool below (grid + browse-by-day + month calendar) is
+  completely unchanged from Revision 2 — same data, same behavior.
+- Demoted the calendar section's `<h2 class="cal-title">` (was `<h1>`) so
+  the page has one `<h1>` — the preview headline.
+
+**If the schedule data changes**, the two preview PNGs go stale (same
+caveat as the original showcase attempt) — regenerate them the same way:
+screenshot this file's Weekly Calendar and School Year Calendar tabs at
+1180×1200 @2x, crop from the `.section-head`'s y-position (weekly) or to
+the `.section-divider`'s y-position (to exclude Browse-by-Day from the
+weekly poster), replace the two files in `assets/`.
+
 ## Lesson for `system/` (already folded in)
 
 Voice-dictated feedback with crossed-out self-corrections ("that's like...

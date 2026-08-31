@@ -149,6 +149,25 @@ actually below it. `assets/preview-year.png` unchanged.
 "Browse By Day" section stayed as-is below the table — never criticized,
 still useful for a single-day read-out.
 
+## Revision 5 — remove the picture preview
+
+2026-08-31, same day. After seeing the studio-table version with the
+picture preview on top: *"take off this whole part please"* (pointing at
+the entire `.preview` hero section).
+
+Removed the `.preview` section, `.preview-divider`, all associated CSS,
+and the now-unused `assets/preview-*.png` files entirely. The calendar
+section's `<h1 class="cal-title">` was restored to a real `<h1>` (it had
+been demoted to `<h2>` to make room for the preview's own `<h1>`). Page
+now opens directly on the interactive Studio × Day table — no static
+picture step before it.
+
+Net effect after five same-day revisions: Option 2 is the interactive
+tool alone (studio-table weekly view + browse-by-day + month calendar),
+no preview hero, no picture step. If a picture-preview concept comes back
+into scope later, don't re-derive it from scratch — the removed CSS/HTML
+is recoverable from this commit's history if needed.
+
 ## Lesson for `system/` (already folded in)
 
 Voice-dictated feedback with crossed-out self-corrections ("that's like...

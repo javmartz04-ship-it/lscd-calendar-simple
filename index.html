@@ -197,7 +197,7 @@ const EVENTS = [
     color:var(--blue);
     margin-bottom:10px;
   }
-  .cal-head h2.cal-title{
+  .cal-head h1.cal-title{
     font-family:var(--oswald);
     font-weight:600;
     font-size:clamp(30px, 4vw, 44px);
@@ -770,192 +770,17 @@ const EVENTS = [
     .class-row, .se-entry, .mg, .event-row{ opacity:1; transform:none; }
   }
 
-  /* ============================================================ PREVIEW (first view) */
-  .preview{
-    max-width:1180px;
-    margin:0 auto;
-    padding:72px 40px 56px;
-    text-align:center;
-  }
-  .preview-script{
-    font-family:var(--script);
-    font-size:28px;
-    color:var(--blue);
-    margin-bottom:8px;
-  }
-  .preview-eyebrow{
-    font-family:var(--oswald);
-    font-weight:500;
-    font-size:11px;
-    letter-spacing:.24em;
-    text-transform:uppercase;
-    color:var(--muted);
-    margin-bottom:14px;
-  }
-  .preview h1{
-    font-family:var(--oswald);
-    font-weight:600;
-    font-size:clamp(30px, 4.2vw, 46px);
-    letter-spacing:.3px;
-    line-height:1.08;
-    text-wrap:balance;
-    max-width:820px;
-    margin:0 auto;
-  }
-  .preview h1 em{
-    font-style:normal;
-    color:var(--blue-deep);
-  }
-  .preview p.sub{
-    font-size:15.5px;
-    color:var(--body);
-    max-width:520px;
-    margin:16px auto 0;
-  }
-
-  .preview-grid{
-    display:grid;
-    grid-template-columns:1.4fr 1fr;
-    gap:28px;
-    align-items:start;
-    margin:52px 0 20px;
-    text-align:left;
-  }
-  .preview-frame{
-    background:var(--ground);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:10px;
-    box-shadow:0 30px 70px -28px rgba(17,17,17,.16);
-  }
-  .preview-frame img{
-    display:block;
-    width:100%;
-    height:auto;
-    border-radius:5px;
-    border:1px solid var(--line-soft);
-  }
-  .preview-cap{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:12px;
-    margin-top:14px;
-    padding:0 2px;
-  }
-  .preview-cap-title{
-    font-family:var(--oswald);
-    font-weight:600;
-    font-size:14px;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-  }
-  .preview-cap-note{
-    font-size:11.5px;
-    color:var(--muted);
-    font-style:italic;
-  }
-
-  .preview-cue{
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    font-family:var(--oswald);
-    font-weight:500;
-    font-size:13px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--ink);
-    text-decoration:none;
-    background:var(--ground);
-    border:1px solid var(--line);
-    padding:14px 28px;
-    margin-top:28px;
-    transition:all .2s ease;
-  }
-  .preview-cue:hover{ border-color:var(--ink); background:var(--panel); }
-  .preview-cue svg{ width:13px; height:13px; animation:bob 1.8s ease-in-out infinite; }
-  @keyframes bob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(4px); } }
-
-  .preview-divider{
-    display:flex;
-    align-items:center;
-    gap:18px;
-    max-width:1180px;
-    margin:8px auto 0;
-    padding:0 40px 44px;
-  }
-  .preview-divider::before,
-  .preview-divider::after{
-    content:"";
-    flex:1;
-    height:1px;
-    background:var(--line);
-  }
-  .preview-divider span{
-    font-family:var(--oswald);
-    font-weight:500;
-    font-size:11px;
-    letter-spacing:.2em;
-    text-transform:uppercase;
-    color:var(--muted);
-    white-space:nowrap;
-  }
-
-  @media (max-width: 860px){
-    .preview-grid{ grid-template-columns:1fr; }
-  }
-  @media (max-width: 620px){
-    .preview{ padding:56px 20px 40px; }
-    .preview-script{ font-size:24px; }
-    .preview-grid{ margin:36px 0 12px; gap:20px; }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .preview-cue svg{ animation:none; }
-  }
 </style>
 </head>
 <body>
 
-<!-- ============================================================ CALENDAR PREVIEW (first view) -->
-<section class="preview">
-  <div class="preview-script">Laredo School of Contemporary Dance</div>
-  <div class="preview-eyebrow">Season 16 — Rise Higher. Rise Together.</div>
-  <h1>Your whole season, <em>one calendar</em>.</h1>
-  <p class="sub">A quick look at this week and the school year — click through below to browse any day or month yourself.</p>
-
-  <div class="preview-grid">
-    <figure class="preview-frame">
-      <img src="assets/preview-weekly.png" alt="Preview of the LSCD weekly class schedule, Studio A through D by day, Monday through Saturday" width="1180" height="1377" loading="eager">
-      <figcaption class="preview-cap">
-        <span class="preview-cap-title">This Week At A Glance</span>
-        <span class="preview-cap-note">All studios · Mon–Sat</span>
-      </figcaption>
-    </figure>
-    <figure class="preview-frame">
-      <img src="assets/preview-year.png" alt="Preview of the LSCD school year calendar, month view with events and closures" width="1180" height="983" loading="eager">
-      <figcaption class="preview-cap">
-        <span class="preview-cap-title">School Year Calendar</span>
-        <span class="preview-cap-note">Aug 2026 – May 2027</span>
-      </figcaption>
-    </figure>
-  </div>
-
-  <a class="preview-cue" href="#interactive">
-    Browse the calendar yourself
-    <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3.5 9L8 13.5 12.5 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </a>
-</section>
-
-<div class="preview-divider"><span>Interactive Calendar Below</span></div>
-
 <div class="cal" id="cal">
 
   <!-- Header -->
-  <header class="cal-head" id="interactive">
+  <header class="cal-head">
     <div>
       <div class="cal-head-script">Laredo School of Contemporary Dance</div>
-      <h2 class="cal-title">2026–2027 Class Calendar</h2>
+      <h1 class="cal-title">2026–2027 Class Calendar</h1>
     </div>
     <div class="cal-season">
       <div class="cal-season-label">Season <span id="season-num"></span></div>

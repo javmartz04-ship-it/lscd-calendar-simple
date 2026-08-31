@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LSCD Class Calendar — Simple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<script>
+/* ==========================================================================
+   HOW TO UPDATE THIS CALENDAR
+   --------------------------------------------------------------------------
+   Everything the calendar shows lives in the two lists directly below.
+   No design knowledge needed — edit the text between quotes, save, done.
+   This is the SIMPLE version — same data as the full calendar, lighter
+   layout: no studio/style filters, week-at-a-glance first, single-day
+   lookup below it, one calendar view for the school year (no timeline
+   toggle). See NOTES.md for how this differs from builds/lscd-calendar.
+
+   1. WEEKLY CLASSES  →  edit SCHEDULE
+      Each class is one { ... } block. To change a time, edit "start"/"end"
+      (24h clock: 17.25 = 5:15 PM, 18 = 6:00 PM — minutes as fractions:
+      .25 = :15, .5 = :30, .75 = :45).
+      To remove a class, delete its whole { ... } block (including the comma).
+      To add one, copy an existing block and change the details.
+      "day": Mon Tue Wed Thu Fri Sat  ·  "studio": A B C or D
+      "style": Ballet, Jazz, Hip Hop, Contemporary, Tumbling, Turns & Leaps,
+      Fitness, Company (shown as a small tag on each class — no filter here)
+      Optional: "isNew": true shows the NEW badge · "note" shows small italic.
+
+   2. YEAR EVENTS  →  edit EVENTS
+      One { ... } block per entry, grouped by month automatically.
+      "closed": true marks it as a no-class day (muted row + CLOSED tag).
+      Optional "place" (location line) and "note" (small italic fine print).
+      "from" / "to" place the event on the month calendar
+      ("YYYY-MM-DD"; leave "to" out for a single day; leave both out for a
+      TBA date — it still lists under its month).
+      "date" is the text shown to parents — keep it matching from/to.
+   ========================================================================== */
+
+const SEASON = { number: 16, name: "RISE", motto: "Rise Higher. Rise Together." };
+
+const SCHEDULE = [
+  /* ------------------------------ MONDAY ------------------------------ */
+  { day:"Mon", start:17.25, end:18.25, name:"Pre-Ballet 3",                 ages:"ages 9–10",    teacher:"Jess",             studio:"A", style:"Ballet" },
+  { day:"Mon", start:18.5,  end:19.5,  name:"Modern/Horton 1",             ages:"",             teacher:"Jess",             studio:"A", style:"Contemporary", note:"by admission only" },
+  { day:"Mon", start:19.5,  end:20.75, name:"Grade 3–4 & Pointe 3/4",      ages:"",             teacher:"Jess",             studio:"A", style:"Ballet" },
+  { day:"Mon", start:20.75, end:22,    name:"SR Ballet Pre-Prof",          ages:"",             teacher:"Jess",             studio:"A", style:"Ballet" },
+  { day:"Mon", start:17.5,  end:18.25, name:"Tiny Movers",                 ages:"ages 3–4",     teacher:"Alyssa",           studio:"B", style:"Ballet" },
+  { day:"Mon", start:18.25, end:19.25, name:"Pre-Ballet 2",                ages:"ages 8–9",     teacher:"Silvie",           studio:"B", style:"Ballet" },
+  { day:"Mon", start:17.25, end:18,    name:"Pre-Hip Hop 1",               ages:"ages 5–7",     teacher:"Emma G",           studio:"C", style:"Hip Hop" },
+  { day:"Mon", start:18.25, end:19.5,  name:"GRÜV 956 Rehearsal",          ages:"",             teacher:"Juan",             studio:"C", style:"Company" },
+  { day:"Mon", start:20.75, end:22,    name:"NFS CRÜ Rehearsal",           ages:"",             teacher:"Juan",             studio:"C", style:"Company" },
+  { day:"Mon", start:17.25, end:18.25, name:"Pre-Ballet 1",                ages:"ages 5–7",     teacher:"Dani",             studio:"D", style:"Ballet", isNew:true },
+  { day:"Mon", start:18.25, end:19.25, name:"Pre-Hip Hop 3",               ages:"ages 9–10",    teacher:"Melody",           studio:"D", style:"Hip Hop" },
+  { day:"Mon", start:19.5,  end:20.75, name:"Teen Hip Hop 1/2",            ages:"",             teacher:"Juan",             studio:"D", style:"Hip Hop" },
+
+  /* ------------------------------ TUESDAY ----------------------------- */
+  { day:"Tue", start:17,    end:17.5,  name:"Tiny Tots",                   ages:"ages 18–35 mos", teacher:"Jess",           studio:"A", style:"Ballet" },
+  { day:"Tue", start:17.5,  end:18.5,  name:"Preparatory Grade 1",         ages:"",             teacher:"Jess",             studio:"A", style:"Ballet" },
+  { day:"Tue", start:18.5,  end:19.5,  name:"Teen/Adult Ballet 1",         ages:"",             teacher:"Jess",             studio:"A", style:"Ballet" },
+  { day:"Tue", start:19.5,  end:20.75, name:"Grade 2 & Pointe 2",          ages:"",             teacher:"Jess",             studio:"A", style:"Ballet" },
+  { day:"Tue", start:20.75, end:22,    name:"Horton 2/3",                  ages:"",             teacher:"Jess",             studio:"A", style:"Contemporary" },
+  { day:"Tue", start:17.5,  end:18.25, name:"Tiny Movers",                 ages:"ages 3–4",     teacher:"Alyssa / Silvie",  studio:"B", style:"Ballet" },
+  { day:"Tue", start:18,    end:19,    name:"Pre-Ballet 1",                ages:"ages 5–7",     teacher:"Dani",             studio:"C", style:"Ballet" },
+  { day:"Tue", start:19,    end:20,    name:"Youth Ballet 2B",             ages:"",             teacher:"Dani",             studio:"C", style:"Ballet" },
+  { day:"Tue", start:20,    end:21,    name:"Youth Hip Hop 2A/2B",         ages:"",             teacher:"Juan",             studio:"C", style:"Hip Hop" },
+  { day:"Tue", start:18.5,  end:19.5,  name:"Pre-Turns & Leaps",           ages:"ages 8–11",    teacher:"Margaret / Marlene", studio:"D", style:"Turns & Leaps" },
+  { day:"Tue", start:18.5,  end:19.75, name:"Youth Hip Hop 1A/1B",         ages:"",             teacher:"Juan",             studio:"D", style:"Hip Hop" },
+  { day:"Tue", start:20,    end:21.25, name:"JR Drill Co Rehearsal",       ages:"",             teacher:"Dani",             studio:"D", style:"Company" },
+
+  /* ----------------------------- WEDNESDAY ---------------------------- */
+  { day:"Wed", start:17.25, end:18.25, name:"Youth Cont. Jazz 1A/1B",      ages:"ages 11–13",   teacher:"Jess",             studio:"A", style:"Jazz" },
+  { day:"Wed", start:18.25, end:19.5,  name:"Teen/Adult Cont. Jazz 1A/1B", ages:"",             teacher:"Jess",             studio:"A", style:"Jazz" },
+  { day:"Wed", start:19.5,  end:20.75, name:"Teen/Adult Cont. Jazz 2/3",   ages:"",             teacher:"Jess",             studio:"A", style:"Jazz" },
+  { day:"Wed", start:20.75, end:22,    name:"SR Jazz & Contemporary Pre-Prof", ages:"",         teacher:"Jess",             studio:"A", style:"Jazz" },
+  { day:"Wed", start:17.5,  end:18.25, name:"Baby Jazz",                   ages:"ages 3–4",     teacher:"Margaret",         studio:"B", style:"Jazz" },
+  { day:"Wed", start:18.25, end:19,    name:"Pre-Jazz 1",                  ages:"ages 5–7",     teacher:"Marlene",          studio:"B", style:"Jazz" },
+  { day:"Wed", start:17.25, end:18.25, name:"Pre-Jazz 3",                  ages:"ages 9–10",    teacher:"Dani",             studio:"C", style:"Jazz" },
+  { day:"Wed", start:18.25, end:19.25, name:"Pre-Jazz 2",                  ages:"ages 8–9",     teacher:"Margaret",         studio:"C", style:"Jazz" },
+  { day:"Wed", start:19.5,  end:20.75, name:"Lil Blaze Rehearsal",         ages:"",             teacher:"Juan",             studio:"C", style:"Company" },
+  { day:"Wed", start:18.25, end:19.5,  name:"Youth Jazz 2A",               ages:"",             teacher:"Dani",             studio:"D", style:"Jazz" },
+  { day:"Wed", start:19.5,  end:20.75, name:"Youth Jazz 2B",               ages:"",             teacher:"Dani",             studio:"D", style:"Jazz" },
+  { day:"Wed", start:20.75, end:21.75, name:"JR Drill Co Technique",       ages:"",             teacher:"Dani",             studio:"D", style:"Company" },
+
+  /* ----------------------------- THURSDAY ----------------------------- */
+  { day:"Thu", start:17.25, end:18.25, name:"Youth Ballet 1A/1B",          ages:"ages 11–13",   teacher:"Jess",             studio:"A", style:"Ballet" },
+  { day:"Thu", start:18.25, end:19.5,  name:"Preparatory Grade 2 / Grade 1 & Pointe 1", ages:"", teacher:"Jess",            studio:"A", style:"Ballet" },
+  { day:"Thu", start:19.5,  end:20.5,  name:"Teen/Adult Ballet 2/3",       ages:"",             teacher:"Jess",             studio:"A", style:"Ballet" },
+  { day:"Thu", start:17.5,  end:18.25, name:"Pre-Jazz 1",                  ages:"ages 5–7",     teacher:"Vale",             studio:"B", style:"Jazz" },
+  { day:"Thu", start:18.25, end:19.25, name:"Pre-Hip Hop 2",               ages:"ages 8–9",     teacher:"Melody",           studio:"B", style:"Hip Hop" },
+  { day:"Thu", start:19.25, end:20.25, name:"Boys Hip Hop",                ages:"ages 9–13",    teacher:"Juan",             studio:"B", style:"Hip Hop", isNew:true },
+  { day:"Thu", start:17.5,  end:18.5,  name:"Pre-Ballet 1",                ages:"ages 5–7",     teacher:"Dani",             studio:"C", style:"Ballet" },
+  { day:"Thu", start:18.5,  end:19.5,  name:"Youth Ballet 2A",             ages:"",             teacher:"Dani / Vale",      studio:"C", style:"Ballet" },
+  { day:"Thu", start:20.5,  end:21.5,  name:"Jazz Funk",                   ages:"ages 15+",     teacher:"Juan",             studio:"C", style:"Jazz" },
+  { day:"Thu", start:17.25, end:18,    name:"Pre-Hip Hop 1",               ages:"ages 5–7",     teacher:"Emma G",           studio:"D", style:"Hip Hop", isNew:true },
+  { day:"Thu", start:18.25, end:19.25, name:"Sculpt & Stretch",            ages:"ages 18+",     teacher:"Frenchie",         studio:"D", style:"Fitness", isNew:true },
+  { day:"Thu", start:19.5,  end:20.5,  name:"Youth Turns & Leaps",         ages:"",             teacher:"Dani",             studio:"D", style:"Turns & Leaps", note:"must meet pre-reqs" },
+
+  /* ------------------------------ FRIDAY ------------------------------ */
+  { day:"Fri", start:16.75, end:18.25, name:"JR Ballet/Jazz Pre-Prof Rehearsal", ages:"",       teacher:"Jess",             studio:"D", style:"Company" },
+  { day:"Fri", start:18.25, end:19.5,  name:"INT Ballet Pre-Prof Rehearsal", ages:"",           teacher:"Jess",             studio:"D", style:"Company" },
+  { day:"Fri", start:19.5,  end:20.75, name:"INT Jazz & Contemporary Pre-Prof", ages:"",        teacher:"Jess",             studio:"D", style:"Company" },
+
+  /* ----------------------------- SATURDAY ----------------------------- */
+  { day:"Sat", start:10,    end:10.75, name:"Tiny Movers",                 ages:"ages 3–4",     teacher:"Silvie",           studio:"A", style:"Ballet" },
+  { day:"Sat", start:11,    end:12,    name:"Youth Modern/Contemporary",   ages:"ages 9–12",    teacher:"Dani",             studio:"A", style:"Contemporary" },
+  { day:"Sat", start:12,    end:13,    name:"Pre-Ballet 1",                ages:"ages 5–7",     teacher:"Alyssa",           studio:"A", style:"Ballet" },
+  { day:"Sat", start:13,    end:14,    name:"Teen Beginner Turns & Leaps", ages:"",             teacher:"Dani",             studio:"A", style:"Turns & Leaps" },
+  { day:"Sat", start:10,    end:10.75, name:"Tumbling",                    ages:"ages 3–4",     teacher:"Alexis",           studio:"B", style:"Tumbling" },
+  { day:"Sat", start:11,    end:11.75, name:"Tumbling",                    ages:"ages 5–7",     teacher:"Alexis",           studio:"B", style:"Tumbling" },
+  { day:"Sat", start:12,    end:12.75, name:"Tumbling",                    ages:"ages 8–10",    teacher:"Alexis",           studio:"B", style:"Tumbling" },
+  { day:"Sat", start:13,    end:13.75, name:"Tumbling",                    ages:"ages 11–18",   teacher:"Alexis",           studio:"B", style:"Tumbling" },
+  { day:"Sat", start:10,    end:11,    name:"Mat Pilates",                 ages:"",             teacher:"Frenchie",         studio:"C", style:"Fitness", isNew:true },
+  { day:"Sat", start:11,    end:12,    name:"Pre-Ballet 2",                ages:"ages 8–9",     teacher:"Silvie",           studio:"C", style:"Ballet" },
+  { day:"Sat", start:12,    end:13,    name:"Youth Ballet 1A/1B",          ages:"",             teacher:"Silvie",           studio:"C", style:"Ballet" },
+  { day:"Sat", start:10,    end:10.833,name:"Strength & Flexibility",      ages:"ages 9+",      teacher:"",                 studio:"D", style:"Fitness" },
+  { day:"Sat", start:11,    end:12,    name:"Youth Lyrical/Contemporary",  ages:"",             teacher:"Jess",             studio:"D", style:"Contemporary", note:"by admission only" },
+  { day:"Sat", start:12,    end:13,    name:"Teen/Adult Lyrical/Contemporary", ages:"",         teacher:"Jess",             studio:"D", style:"Contemporary", note:"by admission only" },
+  { day:"Sat", start:13,    end:14,    name:"Teen Int/Adv Turns & Leaps",  ages:"",             teacher:"Jess",             studio:"D", style:"Turns & Leaps", note:"must meet pre-reqs" },
+];
+
+const EVENTS = [
+  { month:"August 2026",    date:"Aug 15",          from:"2026-08-15",                   title:"Back 2 Dance Event" },
+  { month:"August 2026",    date:"Aug 18",          from:"2026-08-18",                   title:"First Day of Classes @ LSCD" },
+  { month:"August 2026",    date:"Aug 30",          from:"2026-08-30",                   title:"Nutcracker Auditions" },
+  { month:"September 2026", date:"Sep 7",           from:"2026-09-07",                   title:"Labor Day", closed:true },
+  { month:"October 2026",   date:"Oct 26–30",       from:"2026-10-26", to:"2026-10-30",  title:"LSCD Spirit Week" },
+  { month:"October 2026",   date:"Oct 31",          from:"2026-10-31",                   title:"Halloween", closed:true },
+  { month:"November 2026",  date:"Nov 23–28",       from:"2026-11-23", to:"2026-11-28",  title:"Thanksgiving Break", closed:true },
+  { month:"December 2026",  date:"Dec 12",          from:"2026-12-12",                   title:"Nutcracker Tea Party", place:"Laredo Country Club" },
+  { month:"December 2026",  date:"Dec 14",          from:"2026-12-14",                   title:"Sensory-Friendly Nutcracker Show for LISD & UISD", place:"LISD Performing Arts Center" },
+  { month:"December 2026",  date:"Dec 18",          from:"2026-12-18",                   title:"$60 Production Fee Due — 16th Annual Dance Showcase", note:"If your child will not be participating in the showcase, you must notify us before the 18th to avoid automatic payment." },
+  { month:"December 2026",  date:"Dec 20 – Jan 5",  from:"2026-12-20", to:"2027-01-05",  title:"Christmas & New Year's Break", closed:true },
+  { month:"January 2027",   date:"Jan 6",           from:"2027-01-06",                   title:"Classes Resume @ LSCD" },
+  { month:"February 2027",  date:"Feb 8–13",        from:"2027-02-08", to:"2027-02-13",  title:"Love is in the Air Week" },
+  { month:"March 2027",     date:"Mar 8–13",        from:"2027-03-08", to:"2027-03-13",  title:"Spring Break", closed:true },
+  { month:"March 2027",     date:"Mar 26",          from:"2027-03-26",                   title:"Father Daughter Dance", note:"Tentative date." },
+  { month:"March 2027",     date:"Mar 26–28",       from:"2027-03-26", to:"2027-03-28",  title:"Good Friday & Easter Holiday", closed:true },
+  { month:"March 2027",     date:"Mar 29",          from:"2027-03-29",                   title:"Classes Resume" },
+  { month:"April 2027",     date:"Apr 17",          from:"2027-04-17",                   title:"All Costume Fees Due", note:"Costumes will be charged to the card on file. Cash payments may be given in person at the front desk." },
+  { month:"May 2027",       date:"TBA",                                                  title:"16th Annual Dance Showcases", note:"Info will be provided in December/January. Last day of classes will be their showcase performance." },
+];
+</script>
+
+<style>
+  :root{
+    --blue:        #49C6FF;
+    --blue-deep:   #21AEEF;
+    --blue-wash:   #EDF9FF;
+    --ink:         #111111;
+    --body:        #4A5560;
+    --muted:       #8A939C;
+    --faint:       #B9C0C7;
+    --ground:      #FFFFFF;
+    --panel:       #F7F6F4;
+    --line:        #E9E7E3;
+    --line-soft:   #F1EFEC;
+    --closed:      #B65C50;
+    --closed-wash: #FBF1EF;
+    --shadow-rest: 0 20px 50px -20px rgba(17,17,17,.10);
+    --oswald: 'Oswald', 'Arial Narrow', sans-serif;
+    --mont:   'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+    --script: 'Great Vibes', cursive;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    font-family:var(--mont);
+    color:var(--ink);
+    background:var(--ground);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .cal{
+    max-width:1180px;
+    margin:0 auto;
+    padding:56px 40px 72px;
+  }
+
+  /* ---------------------------------------------------------------- header */
+  .cal-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:32px;
+    margin-bottom:40px;
+  }
+  .cal-head-script{
+    font-family:var(--script);
+    font-size:30px;
+    line-height:1;
+    color:var(--blue);
+    margin-bottom:10px;
+  }
+  .cal-head h1{
+    font-family:var(--oswald);
+    font-weight:600;
+    font-size:clamp(30px, 4vw, 44px);
+    letter-spacing:.5px;
+    line-height:1.05;
+    text-transform:uppercase;
+  }
+  .cal-season{
+    text-align:right;
+    flex-shrink:0;
+    padding-bottom:6px;
+  }
+  .cal-season-label{
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .cal-season-motto{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink);
+    margin-top:4px;
+  }
+  .cal-season-motto em{
+    font-style:normal;
+    color:var(--blue-deep);
+  }
+
+  /* ------------------------------------------------------------- main tabs */
+  .cal-tabs{
+    display:flex;
+    gap:36px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:44px;
+  }
+  .cal-tab{
+    font-family:var(--oswald);
+    font-weight:500;
+    font-size:15px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+    background:none;
+    border:none;
+    border-bottom:2px solid transparent;
+    padding:10px 2px 14px;
+    margin-bottom:-1px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:color .22s ease, border-color .22s ease;
+  }
+  .cal-tab:hover{ color:var(--ink); }
+  .cal-tab[aria-selected="true"]{
+    color:var(--ink);
+    border-bottom-color:var(--blue);
+  }
+
+  /* ------------------------------------------------------------ section head */
+  .section-head{ margin-bottom:22px; }
+  .section-kicker{
+    font-family:var(--oswald);
+    font-weight:500;
+    font-size:10.5px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--blue-deep);
+    margin-bottom:6px;
+  }
+  .section-head h2{
+    font-family:var(--oswald);
+    font-weight:600;
+    font-size:26px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+  }
+  .section-head p{
+    font-size:13.5px;
+    color:var(--muted);
+    margin-top:6px;
+    max-width:520px;
+  }
+
+  .section-divider{
+    border:none;
+    border-top:1px solid var(--line);
+    margin:56px 0 44px;
+  }
+
+  /* -------------------------------------------------------------- week grid */
+  .week-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .week-grid{
+    display:grid;
+    grid-template-columns:repeat(6, minmax(0, 1fr));
+    gap:0 14px;
+    min-width:1060px;
+    align-items:start;
+  }
+  .week-col-head{
+    font-family:var(--oswald);
+    font-weight:600;
+    font-size:14px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    padding:0 2px 12px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:16px;
+  }
+  .week-card{
+    background:var(--ground);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+    margin-bottom:10px;
+    box-shadow:0 12px 30px -18px rgba(17,17,17,.08);
+    transition:box-shadow .22s ease, transform .22s ease;
+    opacity:0;
+    transform:translateY(6px);
+    animation:rowIn .4s ease forwards;
+  }
+  @keyframes rowIn{ to{ opacity:1; transform:translateY(0); } }
+  .week-card:hover{
+    box-shadow:var(--shadow-rest);
+    transform:translateY(-2px);
+  }
+  .week-card .wc-time{
+    font-size:11px;
+    font-weight:600;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+    letter-spacing:.03em;
+  }
+  .week-card .wc-time .wc-studio{ color:var(--muted); font-weight:500; }
+  .week-card .wc-name{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink);
+    line-height:1.35;
+    margin:3px 0 2px;
+  }
+  .week-card .wc-name .badge-new{ font-size:8px; padding:2px 6px 1px; margin-left:6px; vertical-align:1px; }
+  .week-card .wc-meta{
+    font-size:10.5px;
+    color:var(--muted);
+  }
+  .week-card .wc-style{
+    display:inline-block;
+    font-size:9px;
+    font-weight:600;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  .week-empty{
+    font-size:11px;
+    color:var(--faint);
+    font-style:italic;
+    padding:8px 2px;
+  }
+
+  /* --------------------------------------------------------------- day rail */
+  .day-rail{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:26px;
+  }
+  .day-btn{
+    font-family:var(--oswald);
+    font-weight:500;
+    font-size:13px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--body);
+    background:var(--ground);
+    border:1px solid var(--line);
+    padding:9px 20px;
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .day-btn:hover{ border-color:var(--faint); color:var(--ink); }
+  .day-btn[aria-pressed="true"]{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:#fff;
+  }
+
+  /* --------------------------------------------------------------- day list */
+  .day-title{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin:0 0 18px;
+  }
+  .day-title h3{
+    font-family:var(--oswald);
+    font-weight:600;
+    font-size:22px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .day-title .count{
+    font-size:12px;
+    font-weight:500;
+    color:var(--muted);
+  }
+
+  .class-list{ border-top:1px solid var(--line); }
+  .class-row{
+    display:grid;
+    grid-template-columns: 172px 1fr auto;
+    align-items:center;
+    gap:24px;
+    padding:18px 8px;
+    border-bottom:1px solid var(--line-soft);
+    opacity:0;
+    transform:translateY(8px);
+    animation:rowIn .45s ease forwards;
+  }
+  .class-row:hover{ background:linear-gradient(90deg, var(--panel), transparent 70%); }
+
+  .class-time{
+    font-size:13.5px;
+    font-weight:600;
+    letter-spacing:.02em;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+  .class-time span{ color:var(--faint); font-weight:400; padding:0 3px; }
+
+  .class-main{ min-width:0; }
+  .class-name{
+    font-size:15.5px;
+    font-weight:600;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .badge-new{
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.16em;
+    color:#fff;
+    background:var(--blue);
+    padding:3px 8px 2px;
+    border-radius:3px;
+    text-transform:uppercase;
+  }
+  .class-meta{
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:3px;
+  }
+  .class-meta .sep{ padding:0 7px; color:var(--faint); }
+  .class-meta .note{ font-style:italic; }
+
+  .class-side{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-shrink:0;
+  }
+  .tag-style{
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--body);
+    background:var(--panel);
+    padding:5px 11px;
+    border-radius:3px;
+    white-space:nowrap;
+  }
+  .tag-studio{
+    font-family:var(--oswald);
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:.05em;
+    color:var(--ink);
+    border:1px solid var(--line);
+    width:34px; height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:3px;
+  }
+
+  .empty-day{
+    padding:64px 20px;
+    text-align:center;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .empty-day .script{
+    font-family:var(--script);
+    font-size:34px;
+    color:var(--faint);
+    display:block;
+    margin-bottom:6px;
+  }
+  .empty-day p{ font-size:13px; color:var(--muted); }
+
+  /* ------------------------------------------------------------- year view */
+  .year-controls{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    margin-bottom:8px;
+  }
+  .month-nav{
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .month-nav-label{
+    font-family:var(--oswald);
+    font-weight:600;
+    font-size:19px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    min-width:200px;
+    text-align:center;
+    font-variant-numeric:tabular-nums;
+  }
+  .month-nav-label small{
+    font-family:var(--mont);
+    font-weight:500;
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--muted);
+    display:block;
+    margin-top:1px;
+  }
+  .nav-arrow{
+    width:36px; height:36px;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--ground);
+    border:1px solid var(--line);
+    color:var(--ink);
+    cursor:pointer;
+    transition:all .18s ease;
+  }
+  .nav-arrow:hover:not(:disabled){ border-color:var(--ink); }
+  .nav-arrow:disabled{ opacity:.3; cursor:default; }
+  .nav-arrow svg{ width:14px; height:14px; display:block; }
+
+  .year-note{
+    font-size:12.5px;
+    color:var(--muted);
+    margin:6px 0 22px;
+  }
+
+  .mg{
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 16px 40px -24px rgba(17,17,17,.10);
+    animation:rowIn .45s ease forwards;
+    opacity:0;
+    transform:translateY(8px);
+  }
+  .mg-head{
+    display:grid;
+    grid-template-columns:repeat(7, minmax(0,1fr));
+    background:var(--panel);
+    border-bottom:1px solid var(--line);
+  }
+  .mg-head div{
+    font-family:var(--oswald);
+    font-weight:500;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--body);
+    text-align:center;
+    padding:10px 4px;
+  }
+  .mg-body{
+    display:grid;
+    grid-template-columns:repeat(7, minmax(0,1fr));
+  }
+  .mg-cell{
+    min-height:96px;
+    padding:8px 8px 10px;
+    border-top:1px solid var(--line-soft);
+    border-left:1px solid var(--line-soft);
+    background:var(--ground);
+    position:relative;
+  }
+  .mg-body .mg-cell:nth-child(-n+7){ border-top:none; }
+  .mg-body .mg-cell:nth-child(7n+1){ border-left:none; }
+  .mg-cell.is-out{ background:var(--panel); }
+  .mg-cell.is-closed{ background:var(--closed-wash); }
+  .mg-cell.is-event{ background:var(--blue-wash); }
+  .mg-daynum{
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+    width:24px; height:24px;
+    display:inline-flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    margin:-2px 0 4px -4px;
+  }
+  .is-out .mg-daynum{ color:var(--faint); font-weight:500; }
+  .is-closed .mg-daynum{ color:var(--closed); }
+  .mg-daynum.is-today{
+    background:var(--ink);
+    color:#fff;
+  }
+  .mg-chip{
+    display:block;
+    font-size:10.5px;
+    font-weight:600;
+    line-height:1.3;
+    color:var(--ink);
+    background:var(--ground);
+    border:1px solid var(--line);
+    border-left:3px solid var(--blue);
+    border-radius:3px;
+    padding:4px 7px;
+    margin-top:3px;
+  }
+  .mg-chip.is-closed-chip{
+    border-left-color:var(--closed);
+    color:var(--closed);
+  }
+  .mg-chip small{
+    display:block;
+    font-weight:500;
+    font-size:9.5px;
+    color:var(--muted);
+    margin-top:1px;
+  }
+  .mg-dots{ display:none; margin-top:2px; gap:3px; }
+  .mg-dot{
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--blue);
+  }
+  .mg-dot.is-closed-dot{ background:var(--closed); }
+
+  .mg-extra{ margin-top:18px; }
+  .mg-extra .event-row{ border:1px solid var(--line-soft); }
+  .mg-list{ display:none; margin-top:18px; }
+
+  .event-row{
+    display:grid;
+    grid-template-columns:128px 1fr;
+    gap:20px;
+    padding:13px 14px;
+    border-radius:6px;
+    align-items:baseline;
+  }
+  .event-row + .event-row{ margin-top:4px; }
+  .event-row.is-closed{ background:var(--closed-wash); }
+  .event-date{
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:.04em;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+  .is-closed .event-date{ color:var(--closed); }
+  .event-body .event-title{
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .tag-closed{
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--closed);
+    border:1px solid currentColor;
+    padding:2px 8px 1px;
+    border-radius:3px;
+    margin-left:10px;
+    vertical-align:2px;
+    white-space:nowrap;
+  }
+  .event-place{
+    font-size:12.5px;
+    color:var(--body);
+    margin-top:2px;
+  }
+  .event-note{
+    font-size:12px;
+    font-style:italic;
+    color:var(--muted);
+    margin-top:5px;
+    max-width:560px;
+  }
+
+  @media (max-width: 620px){
+    .mg-cell{ min-height:52px; padding:5px 4px 6px; }
+    .mg-chip{ display:none; }
+    .mg-dots{ display:flex; }
+    .mg-daynum{ width:22px; height:22px; font-size:11px; margin:0 0 2px 0; }
+    .mg-list{ display:block; }
+  }
+
+  /* --------------------------------------------------------------- footer */
+  .cal-foot{
+    margin-top:56px;
+    padding-top:22px;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .cal-foot p{
+    font-size:11px;
+    letter-spacing:.06em;
+    color:var(--muted);
+  }
+  .cal-foot .foot-script{
+    font-family:var(--script);
+    font-size:23px;
+    color:var(--faint);
+  }
+
+  /* ------------------------------------------------------------ responsive */
+  @media (max-width: 860px){
+    .cal{ padding:40px 24px 56px; }
+    .cal-head{ flex-direction:column; align-items:flex-start; gap:14px; margin-bottom:32px; }
+    .cal-season{ text-align:left; }
+    .cal-tabs{ gap:24px; overflow-x:auto; }
+    .section-divider{ margin:44px 0 36px; }
+  }
+  @media (max-width: 620px){
+    .cal{ padding:32px 16px 48px; }
+    .cal-head-script{ font-size:26px; }
+    .class-row{
+      grid-template-columns:1fr;
+      gap:6px;
+      padding:16px 4px;
+    }
+    .class-side{ gap:8px; }
+    .tag-studio{ width:auto; height:auto; padding:4px 9px; font-size:10.5px; }
+    .event-row{ grid-template-columns:1fr; gap:2px; padding:12px 10px; }
+    .day-btn{ padding:8px 14px; font-size:12px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+    .class-row, .week-card, .mg, .event-row{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cal" id="cal">
+
+  <!-- Header -->
+  <header class="cal-head">
+    <div>
+      <div class="cal-head-script">Laredo School of Contemporary Dance</div>
+      <h1>2026–2027 Class Calendar</h1>
+    </div>
+    <div class="cal-season">
+      <div class="cal-season-label">Season <span id="season-num"></span></div>
+      <div class="cal-season-motto" id="season-motto"></div>
+    </div>
+  </header>
+
+  <!-- Main tabs -->
+  <div class="cal-tabs" role="tablist" aria-label="Calendar views">
+    <button class="cal-tab" id="tab-weekly" role="tab" aria-selected="true" aria-controls="panel-weekly">Weekly Calendar</button>
+    <button class="cal-tab" id="tab-year" role="tab" aria-selected="false" aria-controls="panel-year">School Year Calendar</button>
+  </div>
+
+  <!-- ====================== WEEKLY PANEL ====================== -->
+  <section id="panel-weekly" role="tabpanel" aria-labelledby="tab-weekly">
+
+    <!-- Primary: the whole week, at a glance -->
+    <div class="section-head">
+      <div class="section-kicker">Every Studio · Every Day</div>
+      <h2>This Week At A Glance</h2>
+    </div>
+    <div id="glance-body"></div>
+
+    <hr class="section-divider">
+
+    <!-- Secondary: look up one day -->
+    <div class="section-head">
+      <div class="section-kicker">Looking For One Day?</div>
+      <h2>Browse By Day</h2>
+    </div>
+    <div class="day-rail" id="day-rail"></div>
+    <div id="day-body"></div>
+  </section>
+
+  <!-- ======================= YEAR PANEL ======================= -->
+  <section id="panel-year" role="tabpanel" aria-labelledby="tab-year" hidden>
+    <div class="section-head">
+      <div class="section-kicker">Aug 2026 – May 2027</div>
+      <h2>School Year Calendar</h2>
+    </div>
+    <div class="year-controls">
+      <div class="month-nav" id="month-nav">
+        <button class="nav-arrow" id="nav-prev" aria-label="Previous month">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="month-nav-label" id="month-label"></div>
+        <button class="nav-arrow" id="nav-next" aria-label="Next month">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <p class="year-note">Shaded red dates are studio closures — no classes held. Blue dates are events.</p>
+    <div id="year-body"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="cal-foot">
+    <p>SCHEDULE SUBJECT TO CHANGE &nbsp;·&nbsp; QUESTIONS? CALL <strong>(956)&nbsp;220-1532</strong></p>
+    <span class="foot-script">Dance with Us. Grow with Us.</span>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat"];
+  var DAY_FULL = { Mon:"Monday", Tue:"Tuesday", Wed:"Wednesday", Thu:"Thursday", Fri:"Friday", Sat:"Saturday" };
+
+  /* Season window for the month grid: Aug 2026 → May 2027 */
+  var SEASON_MONTHS = [];
+  (function(){
+    var y = 2026, m = 7;
+    for (var i = 0; i < 10; i++){
+      SEASON_MONTHS.push({ y: y, m: m });
+      m++; if (m > 11){ m = 0; y++; }
+    }
+  })();
+  var MONTH_NAMES = ["January","February","March","April","May","June","July",
+                     "August","September","October","November","December"];
+
+  function defaultMonthIndex(){
+    var now = new Date();
+    for (var i = 0; i < SEASON_MONTHS.length; i++){
+      if (SEASON_MONTHS[i].y === now.getFullYear() && SEASON_MONTHS[i].m === now.getMonth()) return i;
+    }
+    return 0;
+  }
+  function defaultDay(){
+    var i = new Date().getDay();
+    return (i >= 1 && i <= 6) ? DAYS[i-1] : "Mon";
+  }
+
+  var state = {
+    day: defaultDay(),
+    monthIdx: defaultMonthIndex(),
+  };
+
+  function fmtTime(t){
+    var h = Math.floor(t), m = Math.round((t - h) * 60);
+    var h12 = ((h + 11) % 12) + 1;
+    return h12 + ":" + (m < 10 ? "0" + m : m);
+  }
+  function fmtMeridiem(t){ return t >= 12 ? "PM" : "AM"; }
+  function fmtRange(a, b){
+    var sameM = fmtMeridiem(a) === fmtMeridiem(b);
+    return fmtTime(a) + (sameM ? "" : " " + fmtMeridiem(a))
+         + "<span>–</span>" + fmtTime(b) + " " + fmtMeridiem(b);
+  }
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
+    });
+  }
+
+  document.getElementById("season-num").textContent = SEASON.number;
+  document.getElementById("season-motto").innerHTML =
+    '<em>' + esc(SEASON.name) + '</em> &nbsp;—&nbsp; “' + esc(SEASON.motto) + '”';
+
+  function classesFor(day){
+    return SCHEDULE
+      .filter(function(c){ return c.day === day; })
+      .sort(function(a, b){ return a.start - b.start || (a.studio < b.studio ? -1 : 1); });
+  }
+
+  /* ---------------- glance grid (static, no filters, no toggle) ---------------- */
+  function renderGlance(){
+    var html = '<div class="week-wrap"><div class="week-grid">';
+    DAYS.forEach(function(d){
+      html += '<div><div class="week-col-head">' + DAY_FULL[d] + '</div>';
+      var list = classesFor(d);
+      if (!list.length){
+        html += '<div class="week-empty">No classes</div>';
+      } else {
+        list.forEach(function(c, i){
+          html += '<div class="week-card" style="animation-delay:' + Math.min(i * 25, 300) + 'ms">' +
+            '<div class="wc-time">' + fmtRange(c.start, c.end) + '<span class="wc-studio"> · ST ' + c.studio + '</span></div>' +
+            '<div class="wc-name">' + esc(c.name) + (c.isNew ? '<span class="badge-new">New</span>' : "") + '</div>' +
+            '<div class="wc-style">' + esc(c.style) + '</div>' +
+          '</div>';
+        });
+      }
+      html += '</div>';
+    });
+    html += '</div></div>';
+    document.getElementById("glance-body").innerHTML = html;
+  }
+
+  /* ---------------- day rail + single-day list ---------------- */
+  function renderRail(){
+    var rail = document.getElementById("day-rail");
+    rail.innerHTML = DAYS.map(function(d){
+      return '<button class="day-btn" data-day="' + d + '" aria-pressed="' + (state.day === d) + '">' + d + '</button>';
+    }).join("");
+  }
+
+  function rowHTML(c, i){
+    var meta = [];
+    if (c.ages)    meta.push(esc(c.ages));
+    if (c.teacher) meta.push("with " + esc(c.teacher));
+    var metaStr = meta.join('<span class="sep">·</span>');
+    if (c.note) metaStr += (metaStr ? '<span class="sep">·</span>' : "") + '<span class="note">' + esc(c.note) + '</span>';
+    return '' +
+      '<div class="class-row" style="animation-delay:' + Math.min(i * 35, 420) + 'ms">' +
+        '<div class="class-time">' + fmtRange(c.start, c.end) + '</div>' +
+        '<div class="class-main">' +
+          '<div class="class-name">' + esc(c.name) + (c.isNew ? '<span class="badge-new">New</span>' : "") + '</div>' +
+          (metaStr ? '<div class="class-meta">' + metaStr + '</div>' : "") +
+        '</div>' +
+        '<div class="class-side">' +
+          '<span class="tag-style">' + esc(c.style) + '</span>' +
+          '<span class="tag-studio" title="Studio ' + c.studio + '">' + c.studio + '</span>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function renderDay(){
+    var list = classesFor(state.day);
+    var html = '<div class="day-title"><h3>' + DAY_FULL[state.day] + '</h3>'
+             + '<span class="count">' + list.length + (list.length === 1 ? " class" : " classes") + '</span></div>';
+    html += '<div class="class-list">';
+    if (list.length){
+      html += list.map(rowHTML).join("");
+    } else {
+      html += '<div class="empty-day"><span class="script">a day of rest</span>'
+           +  '<p>No classes on this day.</p></div>';
+    }
+    html += '</div>';
+    document.getElementById("day-body").innerHTML = html;
+  }
+
+  /* ---------------- month grid (single view, no timeline toggle) ---------------- */
+  function parseISO(s){
+    var p = s.split("-");
+    return new Date(+p[0], +p[1] - 1, +p[2]);
+  }
+  function sameDate(a, b){
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  }
+  function eventsOn(d){
+    var ts = d.getTime();
+    return EVENTS.filter(function(e){
+      if (!e.from) return false;
+      var f = parseISO(e.from).getTime();
+      var t = (e.to ? parseISO(e.to) : parseISO(e.from)).getTime();
+      return ts >= f && ts <= t;
+    });
+  }
+  function eventRowHTML(e){
+    return '<div class="event-row' + (e.closed ? " is-closed" : "") + '">' +
+      '<div class="event-date">' + esc(e.date) + '</div>' +
+      '<div class="event-body">' +
+        '<span class="event-title">' + esc(e.title) + '</span>' +
+        (e.closed ? '<span class="tag-closed">No Classes</span>' : "") +
+        (e.place ? '<div class="event-place">' + esc(e.place) + '</div>' : "") +
+        (e.note  ? '<div class="event-note">'  + esc(e.note)  + '</div>' : "") +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderMonthGrid(){
+    var mo = SEASON_MONTHS[state.monthIdx];
+    var first = new Date(mo.y, mo.m, 1);
+    var gridStart = new Date(mo.y, mo.m, 1 - first.getDay());
+    var today = new Date();
+
+    var html = '<div class="mg" role="grid" aria-label="' + MONTH_NAMES[mo.m] + ' ' + mo.y + '">';
+    html += '<div class="mg-head">' +
+      ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(function(d){ return "<div>" + d + "</div>"; }).join("") +
+      '</div><div class="mg-body">';
+
+    var monthEvents = [];
+
+    for (var i = 0; i < 42; i++){
+      var d = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+      if (i === 35 && d.getMonth() !== mo.m) break;
+      var out = d.getMonth() !== mo.m;
+      var evs = out ? [] : eventsOn(d);
+      var closed = evs.some(function(e){ return e.closed; });
+      var open   = evs.some(function(e){ return !e.closed; });
+
+      var cls = "mg-cell" + (out ? " is-out" : "") +
+                (closed ? " is-closed" : (open ? " is-event" : ""));
+      html += '<div class="' + cls + '">';
+      html += '<span class="mg-daynum' + (!out && sameDate(d, today) ? " is-today" : "") + '">' + d.getDate() + '</span>';
+
+      if (!out && evs.length){
+        html += '<div class="mg-dots">' + evs.map(function(e){
+          return '<span class="mg-dot' + (e.closed ? " is-closed-dot" : "") + '"></span>';
+        }).join("") + '</div>';
+        evs.forEach(function(e){
+          var f = parseISO(e.from);
+          var chipDay = sameDate(d, f) || d.getDate() === 1;
+          if (chipDay){
+            html += '<span class="mg-chip' + (e.closed ? " is-closed-chip" : "") + '">' + esc(e.title) +
+                    (e.closed ? '<small>No classes</small>' : (e.place ? '<small>' + esc(e.place) + '</small>' : "")) +
+                    '</span>';
+          }
+          if (monthEvents.indexOf(e) === -1) monthEvents.push(e);
+        });
+      }
+      html += '</div>';
+    }
+    html += '</div></div>';
+
+    var label = MONTH_NAMES[mo.m] + " " + mo.y;
+    var extras = EVENTS.filter(function(e){ return !e.from && e.month === label; });
+    if (extras.length){
+      html += '<div class="mg-extra">' + extras.map(eventRowHTML).join("") + '</div>';
+    }
+    if (monthEvents.length){
+      html += '<div class="mg-list">' + monthEvents.map(eventRowHTML).join("") + '</div>';
+    }
+
+    document.getElementById("year-body").innerHTML = html;
+    document.getElementById("month-label").innerHTML =
+      MONTH_NAMES[mo.m] + '<small>' + mo.y + '</small>';
+    document.getElementById("nav-prev").disabled = state.monthIdx === 0;
+    document.getElementById("nav-next").disabled = state.monthIdx === SEASON_MONTHS.length - 1;
+  }
+
+  /* ---------------- tabs ---------------- */
+  var tabWeekly = document.getElementById("tab-weekly");
+  var tabYear   = document.getElementById("tab-year");
+  var panelWeekly = document.getElementById("panel-weekly");
+  var panelYear   = document.getElementById("panel-year");
+
+  function selectTab(which){
+    var weekly = which === "weekly";
+    tabWeekly.setAttribute("aria-selected", weekly);
+    tabYear.setAttribute("aria-selected", !weekly);
+    panelWeekly.hidden = !weekly;
+    panelYear.hidden = weekly;
+    if (!weekly) renderMonthGrid();
+    reportHeight();
+  }
+  tabWeekly.addEventListener("click", function(){ selectTab("weekly"); });
+  tabYear.addEventListener("click",   function(){ selectTab("year"); });
+
+  document.getElementById("day-rail").addEventListener("click", function(ev){
+    var b = ev.target.closest("button");
+    if (!b || !b.dataset.day) return;
+    state.day = b.dataset.day;
+    renderRail(); renderDay(); reportHeight();
+  });
+
+  document.getElementById("nav-prev").addEventListener("click", function(){
+    if (state.monthIdx > 0){ state.monthIdx--; renderMonthGrid(); reportHeight(); }
+  });
+  document.getElementById("nav-next").addEventListener("click", function(){
+    if (state.monthIdx < SEASON_MONTHS.length - 1){ state.monthIdx++; renderMonthGrid(); reportHeight(); }
+  });
+
+  /* ---------------- iframe auto-height ---------------- */
+  function reportHeight(){
+    try {
+      if (window.parent !== window){
+        requestAnimationFrame(function(){
+          window.parent.postMessage(
+            { type: "lscd-cal-height", height: document.documentElement.scrollHeight },
+            "*"
+          );
+        });
+      }
+    } catch (e) { /* standalone use — nothing to do */ }
+  }
+  window.addEventListener("resize", reportHeight);
+
+  /* ---------------- boot ---------------- */
+  renderGlance();
+  renderRail();
+  renderDay();
+  reportHeight();
+})();
+</script>
+</body>
+</html>

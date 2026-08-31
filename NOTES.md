@@ -63,6 +63,28 @@ Own repo, same pattern as the others: `javmartz04-ship-it/lscd-calendar-simple`,
 `index.html` at root, GitHub Pages on `main`/`/`.
 Live: https://javmartz04-ship-it.github.io/lscd-calendar-simple/
 
+## Revision 2 — "make it look like a calendar, not a list"
+
+2026-08-31, same day. Feedback after seeing the shipped version:
+> "Can we make it like a calendar picture format? Like where they can see
+> if it was a calendar instead of like a list?"
+
+The "This Week At A Glance" section was a card stacked per day column —
+correct information, but it read as six parallel lists, not a calendar.
+Replaced it with a real time-grid: hour rows down the left (computed from
+the actual data's earliest/latest start times, not hardcoded) × day columns
+across the top, each class as a small chip in its start-hour's cell. Studio
+letters double as the de-facto overlap lanes (a studio only runs one class
+at a time, so chips in the same cell never collide) — multiple simultaneous
+classes just stack as 2–4 chips in that hour's cell, still legible.
+Saturday's morning classes and the weekday evening classes now visibly
+occupy different rows of the same grid, which is real information (no
+class ever runs at, say, 3pm any day — the grid shows that gap honestly).
+"Browse By Day" below is unchanged.
+
+Did not touch `builds/lscd-calendar` (the "regular way" option) — this
+grid-first weekly view exists only in this simple variant.
+
 ## Lesson for `system/` (already folded in)
 
 Voice-dictated feedback with crossed-out self-corrections ("that's like...

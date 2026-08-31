@@ -124,6 +124,31 @@ screenshot this file's Weekly Calendar and School Year Calendar tabs at
 the `.section-divider`'s y-position (to exclude Browse-by-Day from the
 weekly poster), replace the two files in `assets/`.
 
+## Revision 4 — match the client's own schedule format
+
+2026-08-31, same day. Javier shared a screenshot of the client's real,
+currently-used schedule ("2026-2027 School Year Schedule Schedule" —
+Studio A/B/C/D as rows, Monday–Saturday as columns, blue header bar) with:
+> "I didn't like how it was designed at all ... doesn't look professional
+> ... I give you a reference. I think that's how she's doing it now ...
+> maybe something like this, you know, better?"
+
+This is a different axis than everything built so far (all prior views used
+day as the primary axis — tabs, day columns, or time rows). Rebuilt "This
+Week At A Glance" as a real `<table>`: Studio A–D as row headers (shaded
+panel column), Monday–Saturday as column headers (blue fill, matching the
+reference's header bar), each cell a stack of that studio's classes for
+that day — bold class name + NEW badge, muted meta line (ages · teacher ·
+time), italic note. Removed the time-grid entirely (`.wk-*` CSS/JS) —
+superseded, not layered on top of it.
+
+Regenerated `assets/preview-weekly.png` from this new table (same crop
+method as Revision 3) so the top-of-page picture preview matches what's
+actually below it. `assets/preview-year.png` unchanged.
+
+"Browse By Day" section stayed as-is below the table — never criticized,
+still useful for a single-day read-out.
+
 ## Lesson for `system/` (already folded in)
 
 Voice-dictated feedback with crossed-out self-corrections ("that's like...

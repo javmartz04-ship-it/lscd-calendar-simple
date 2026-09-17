@@ -40,8 +40,6 @@
       "date" is the text shown to parents — keep it matching from/to.
    ========================================================================== */
 
-const SEASON = { number: 16, name: "RISE", motto: "Rise Higher. Rise Together." };
-
 const SCHEDULE = [
   /* ------------------------------ MONDAY ------------------------------ */
   { day:"Mon", start:17.25, end:18.25, name:"Pre-Ballet 3",                 ages:"ages 9–10",    teacher:"Jess",             studio:"A", style:"Ballet" },
@@ -217,30 +215,39 @@ const EVENTS = [
     line-height:1.05;
     text-transform:uppercase;
   }
-  .cal-season{
-    text-align:right;
-    flex-shrink:0;
-    padding-bottom:6px;
+  /* ---------------------------------------------------------------- top bar
+     The logo artwork is white, so it needs the black plate it was drawn for. */
+  .topbar{ background:#000; }
+  .topbar-in{
+    max-width:1400px;
+    margin:0 auto;
+    padding:16px 40px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
   }
-  .cal-season-label{
-    font-size:10.5px;
-    font-weight:600;
-    letter-spacing:.22em;
-    text-transform:uppercase;
+  .topbar-logo{ display:inline-flex; align-items:center; }
+  .topbar-logo img{ height:58px; width:auto; display:block; }
+  .topbar-back{
+    display:inline-flex; align-items:center; gap:8px;
+    min-height:44px;
+    font-family:var(--oswald); font-weight:500;
+    font-size:13px; letter-spacing:.13em; text-transform:uppercase;
+    color:rgba(255,255,255,.74); text-decoration:none;
+    transition:color .25s ease;
+    white-space:nowrap;
+  }
+  .topbar-back svg{ width:13px; height:13px; }
+  .topbar-back:hover{ color:var(--blue); }
+
+  .disclaimer{
+    margin-top:10px;
+    font-size:12.5px;
     color:var(--muted);
   }
-  .cal-season-motto{
-    font-size:13px;
-    font-weight:600;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    color:var(--ink);
-    margin-top:4px;
-  }
-  .cal-season-motto em{
-    font-style:normal;
-    color:var(--blue-deep);
-  }
+  .disclaimer a{ color:var(--ink); font-weight:600; text-decoration:none; border-bottom:1px solid var(--line); }
+  .disclaimer a:hover{ color:var(--blue-deep); border-bottom-color:var(--blue); }
 
   /* ------------------------------------------------------------- main tabs */
   .cal-tabs{
@@ -736,30 +743,111 @@ const EVENTS = [
   /* --------------------------------------------------------------- footer */
   .cal-foot{
     margin-top:56px;
-    padding-top:22px;
+    padding-top:26px;
     border-top:1px solid var(--line);
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
-    flex-wrap:wrap;
-  }
-  .cal-foot p{
-    font-size:11px;
-    letter-spacing:.06em;
+    text-align:center;
+    font-size:12.5px;
+    letter-spacing:.04em;
     color:var(--muted);
   }
-  .cal-foot .foot-script{
+  .cal-foot a{ color:var(--ink); font-weight:600; text-decoration:none; border-bottom:1px solid var(--line); }
+  .cal-foot a:hover{ color:var(--blue-deep); border-bottom-color:var(--blue); }
+
+  /* ---------------------------------------------------------- site footer
+     Matches the footer on the main website so every page carries the same one. */
+  .sitefoot{
+    background:#111;
+    color:rgba(255,255,255,.84);
+    font-family:var(--mont);
+  }
+  .sitefoot a{ text-decoration:none; }
+  .sf-in{
+    max-width:1400px; margin:0 auto;
+    padding:64px 40px 52px;
+    display:grid;
+    grid-template-columns:1.25fr .85fr 1.1fr;
+    gap:48px;
+    align-items:start;
+  }
+  .sf-logo{ display:inline-block; }
+  .sf-logo img{ width:190px; height:auto; display:block; }
+  .sf-word{
     font-family:var(--script);
+    font-size:26px; line-height:1.1;
+    color:#fff;
+    margin-top:6px;
+  }
+  .sf-tag{
+    margin-top:12px; max-width:330px;
+    font-size:15px; line-height:1.7;
+    color:rgba(255,255,255,.84);
+  }
+  .sf-social{ display:flex; gap:12px; margin-top:22px; }
+  .sf-social a{
+    width:40px; height:40px;
+    display:grid; place-items:center;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:50%;
+    color:#fff;
+    transition:border-color .25s ease, color .25s ease;
+  }
+  .sf-social svg{ width:17px; height:17px; }
+  .sf-social a:hover{ color:var(--blue); border-color:rgba(73,198,255,.5); }
+
+  .sitefoot h2{
+    font-family:var(--oswald); font-weight:700;
+    font-size:18px; letter-spacing:.04em; text-transform:uppercase;
+    color:#fff;
+    margin-bottom:20px;
+  }
+  .sf-links{ list-style:none; }
+  .sf-links a{
+    display:inline-flex; align-items:center; min-height:34px;
+    font-size:15px; color:rgba(255,255,255,.84);
+    transition:color .25s ease;
+  }
+  .sf-links a:hover{ color:var(--blue); }
+
+  .sf-phone{
+    display:inline-flex; align-items:center; min-height:44px;
+    font-family:var(--oswald); font-weight:500;
     font-size:24px;
-    color:var(--faint);
+    color:#fff;
+    margin-bottom:14px;
+    transition:color .25s ease;
+  }
+  .sf-phone:hover{ color:var(--blue); }
+  .sf-rows{ list-style:none; display:grid; gap:14px; }
+  .sf-rows li{
+    display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px;
+    font-size:15px; line-height:1.7; color:rgba(255,255,255,.84);
+  }
+  .sf-rows svg{ width:17px; height:17px; margin-top:4px; color:var(--blue); }
+  .sf-rows a{ color:rgba(255,255,255,.84); }
+  .sf-rows a:hover{ color:var(--blue); }
+
+  .sf-bottom{
+    border-top:1px solid rgba(255,255,255,.08);
+    padding:20px 40px;
+    text-align:center;
+    font-size:13px;
+    color:rgba(255,255,255,.52);
+  }
+  .sf-bottom a{ color:rgba(255,255,255,.52); }
+  .sf-bottom a:hover{ color:var(--blue); }
+  .sf-bottom .sep{ padding:0 10px; color:rgba(255,255,255,.28); }
+
+  @media (max-width: 960px){
+    .sf-in{ grid-template-columns:minmax(0,1fr); gap:38px; padding:48px 24px 40px; }
+    .sf-bottom{ padding:18px 24px; }
   }
 
   /* ------------------------------------------------------------ responsive */
   @media (max-width: 860px){
     .cal{ padding:40px 24px 56px; }
     .cal-head{ flex-direction:column; align-items:flex-start; gap:14px; margin-bottom:32px; }
-    .cal-season{ text-align:left; }
+    .topbar-in{ padding:14px 24px; }
+    .topbar-logo img{ height:44px; }
     .cal-tabs{ gap:24px; overflow-x:auto; }
     .section-divider{ margin:44px 0 36px; }
   }
@@ -786,17 +874,24 @@ const EVENTS = [
 </head>
 <body>
 
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="topbar-logo" href="https://violet-rail-831026.hostingersite.com/" aria-label="Laredo School of Contemporary Dance home">
+      <img src="https://violet-rail-831026.hostingersite.com/wp-content/uploads/2026/08/lscd-long-logo.png" width="1642" height="394" alt="Laredo School of Contemporary Dance">
+    </a>
+    <a class="topbar-back" href="https://violet-rail-831026.hostingersite.com/">
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to Home
+    </a>
+  </div>
+</header>
+
 <div class="cal" id="cal">
 
   <!-- Header -->
   <header class="cal-head">
     <div>
-      <div class="cal-head-script">Laredo School of Contemporary Dance</div>
       <h1 class="cal-title">2026–2027 Class Calendar</h1>
-    </div>
-    <div class="cal-season">
-      <div class="cal-season-label">Season <span id="season-num"></span></div>
-      <div class="cal-season-motto" id="season-motto"></div>
     </div>
   </header>
 
@@ -813,6 +908,7 @@ const EVENTS = [
     <div class="section-head">
       <div class="section-kicker">Every Studio · Every Day</div>
       <h2>This Week At A Glance</h2>
+      <p class="disclaimer">Schedule subject to change &nbsp;·&nbsp; Questions? Call <a href="tel:+19562201532">(956)&nbsp;220-1532</a></p>
     </div>
     <div id="glance-body"></div>
 
@@ -848,13 +944,74 @@ const EVENTS = [
     <div id="year-body"></div>
   </section>
 
-  <!-- Footer -->
-  <footer class="cal-foot">
-    <p>SCHEDULE SUBJECT TO CHANGE &nbsp;·&nbsp; QUESTIONS? CALL <strong>(956)&nbsp;220-1532</strong></p>
-    <span class="foot-script">Dance with Us. Grow with Us.</span>
-  </footer>
+  <!-- Closing line, centred above the site footer -->
+  <p class="cal-foot">Schedule subject to change &nbsp;·&nbsp; Questions? Call <a href="tel:+19562201532">(956)&nbsp;220-1532</a></p>
 
 </div>
+
+<footer class="sitefoot">
+  <div class="sf-in">
+
+    <div>
+      <a class="sf-logo" href="https://violet-rail-831026.hostingersite.com/" aria-label="Laredo School of Contemporary Dance home">
+        <img src="https://violet-rail-831026.hostingersite.com/wp-content/uploads/2026/08/5592325d-b341-4617-a323-14dab7d51a29.png-Edited-1024x532.png" width="1024" height="532" loading="lazy" alt="Laredo School of Contemporary Dance">
+      </a>
+      <div class="sf-word">Laredo School of Contemporary Dance</div>
+      <p class="sf-tag">Professional dance training in Laredo for every age and every level.</p>
+      <div class="sf-social">
+        <a href="https://www.facebook.com/LaredoSchoolofContemporaryDance/" aria-label="Facebook" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.52 1.49-3.91 3.77-3.91 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.89h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/laredoscd/" aria-label="Instagram" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.youtube.com/channel/UCBXnzg34sFG7c2nbaR7X9eQ" aria-label="YouTube" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3.2-.41-4.74a2.5 2.5 0 0 0-1.76-1.77C19.29 5.07 12 5.07 12 5.07s-7.29 0-8.83.42a2.5 2.5 0 0 0-1.76 1.77C1 8.8 1 12 1 12s0 3.2.41 4.74a2.5 2.5 0 0 0 1.76 1.77c1.54.42 8.83.42 8.83.42s7.29 0 8.83-.42a2.5 2.5 0 0 0 1.76-1.77C23 15.2 23 12 23 12zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <nav aria-label="Quick links">
+      <h2>Quick Links</h2>
+      <ul class="sf-links">
+        <li><a href="https://violet-rail-831026.hostingersite.com/">Home</a></li>
+        <li><a href="https://violet-rail-831026.hostingersite.com/classes/">Classes</a></li>
+        <li><a href="https://violet-rail-831026.hostingersite.com/pre-professional-programs/">Pre-Professional</a></li>
+        <li><a href="https://violet-rail-831026.hostingersite.com/lscd-foundation/">LSCD Foundation</a></li>
+        <li><a href="https://violet-rail-831026.hostingersite.com/lscd-dance-collective/">LSCD Dance Collective</a></li>
+        <li><a href="https://violet-rail-831026.hostingersite.com/birthday-parties/">Birthday Parties</a></li>
+        <li><a href="https://violet-rail-831026.hostingersite.com/annual-events/">Annual Events</a></li>
+        <li><a href="https://violet-rail-831026.hostingersite.com/contact/">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <h2>Contact Us</h2>
+      <a class="sf-phone" href="tel:+19562201532">+1 (956) 220-1532</a>
+      <ul class="sf-rows">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>5901 McPherson Rd Suite 12-14A, 2-4C<br>Laredo, Texas 78041</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
+          <span><a href="mailto:laredoscd@gmail.com">laredoscd@gmail.com</a></span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <span>Monday&ndash;Friday, 4:30&ndash;9:00 p.m.<br>Saturday, 9:30 a.m.&ndash;3:00 p.m.<br>Sunday, closed.</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="sf-bottom">
+    Copyright &copy;2026 LSCD. All rights reserved.
+    <span class="sep">|</span><a href="#">Privacy Policy</a>
+    <span class="sep">|</span><a href="#">Terms and Conditions</a>
+  </div>
+</footer>
 
 <script>
 (function(){
@@ -908,10 +1065,6 @@ const EVENTS = [
       return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c];
     });
   }
-
-  document.getElementById("season-num").textContent = SEASON.number;
-  document.getElementById("season-motto").innerHTML =
-    '<em>' + esc(SEASON.name) + '</em> &nbsp;—&nbsp; “' + esc(SEASON.motto) + '”';
 
   function classesFor(day){
     return SCHEDULE

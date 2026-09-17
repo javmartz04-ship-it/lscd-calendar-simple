@@ -199,3 +199,16 @@ After the review, Javier sent the studio's own MyFonts webfont kit: **Brush Scri
 - Font files are in `fonts/brush-script-std/`, loaded with `@font-face`. The fallback is `'Brush Script MT'`, the system version on Mac and Windows.
 - All script sizes are about 16% smaller, because Brush Script Std sets wider than Hurricane at the same px. The line widths and layout stay the same.
 - Licensing: the kit is licensed to the website owner (the studio). It's hosted in the public preview repos for now; long-term it belongs on their own server only.
+
+## Second Loom review — 2026-09-17 ("Edits for Laredo Calendar and Registration Pages", 0:09–3:00)
+
+Josh on the calendar: *"this is all perfect, I think this is actually great."* Four changes:
+
+1. **Season line removed.** He couldn't trace "Season 16 · RISE · Rise Higher. Rise Together." to anything Jess sent (*"did we get that from somewhere that I'm not seeing… let's just remove this altogether"*). The `SEASON` constant went with it.
+2. **Real logo at the top, linked home**, plus a Back to Home link (*"a little back to home link… it will go back to the actual main website"*). The logo is white artwork, so it sits on a black bar — the same trap noted in the client memory. The old blue script wordmark was removed rather than left duplicating the logo directly above it.
+3. **"Schedule subject to change · Questions? Call" appears twice** — under *This Week At A Glance* and again centred just above the footer. **"Dance with Us. Grow with Us." removed** (*"take off the right dance with us grow with us altogether and just have this in the middle"*).
+4. **The main site's footer rebuilt at the bottom** (*"our footers need to be all the same and congruent of the home page"*). Read off the live site rather than eyeballed: bg `#111`, Oswald 700 18px headings, 15px links at `rgba(255,255,255,.84)`, the stacked white LSCD mark at 190px, the script wordmark, tagline, three socials, quick links, contact block with hours, and the centred copyright bar.
+
+**Links point at `violet-rail-831026.hostingersite.com`** (the build shown in the call). Josh flagged this himself: *"maybe we need to do the links afterwards."* They move when the real domain is live.
+
+**Not ours, noted not done:** subdomains (`calendar.` / `register.`), DNS, and connecting both pages to Jess's GoHighLevel account. Manny has DNS access.

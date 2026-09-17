@@ -6,7 +6,7 @@
 <title>LSCD Class Calendar — Simple</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Hurricane&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 
 <script>
 /* ==========================================================================
@@ -146,6 +146,14 @@ const EVENTS = [
 </script>
 
 <style>
+  /* Brush Script Std Italic by Monotype — the studio's licensed MyFonts
+     webfont (MyFonts Webfont Build ID 3867246). Licensed to the website owner. */
+  @font-face{
+    font-family:"BrushScriptStdItalic";
+    src:url("fonts/brush-script-std/BrushScriptStdItalic.woff2") format("woff2"),
+        url("fonts/brush-script-std/BrushScriptStdItalic.woff") format("woff");
+    font-display:swap;
+  }
   :root{
     --blue:        #49C6FF;
     --blue-deep:   #21AEEF;
@@ -163,7 +171,7 @@ const EVENTS = [
     --shadow-rest: 0 20px 50px -20px rgba(17,17,17,.10);
     --oswald: 'Oswald', 'Arial Narrow', sans-serif;
     --mont:   'Montserrat', 'Helvetica Neue', Arial, sans-serif;
-    --script: 'Hurricane', 'Snell Roundhand', cursive;
+    --script: 'BrushScriptStdItalic', 'Brush Script MT', cursive;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
@@ -196,7 +204,7 @@ const EVENTS = [
   }
   .cal-head-script{
     font-family:var(--script);
-    font-size:38px;
+    font-size:32px;
     line-height:1;
     color:var(--blue);
     margin-bottom:10px;
@@ -516,7 +524,7 @@ const EVENTS = [
   }
   .empty-day .script{
     font-family:var(--script);
-    font-size:42px;
+    font-size:35px;
     color:var(--faint);
     display:block;
     margin-bottom:6px;
@@ -743,7 +751,7 @@ const EVENTS = [
   }
   .cal-foot .foot-script{
     font-family:var(--script);
-    font-size:29px;
+    font-size:24px;
     color:var(--faint);
   }
 
@@ -757,7 +765,7 @@ const EVENTS = [
   }
   @media (max-width: 620px){
     .cal{ padding:32px 16px 48px; }
-    .cal-head-script{ font-size:32px; }
+    .cal-head-script{ font-size:27px; }
     .class-row{
       grid-template-columns:1fr;
       gap:6px;

@@ -6,7 +6,7 @@
 <title>LSCD Class Calendar — Simple</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Hurricane&display=swap" rel="stylesheet">
 
 <script>
 /* ==========================================================================
@@ -163,7 +163,7 @@ const EVENTS = [
     --shadow-rest: 0 20px 50px -20px rgba(17,17,17,.10);
     --oswald: 'Oswald', 'Arial Narrow', sans-serif;
     --mont:   'Montserrat', 'Helvetica Neue', Arial, sans-serif;
-    --script: 'Great Vibes', cursive;
+    --script: 'Hurricane', 'Snell Roundhand', cursive;
   }
 
   *{ margin:0; padding:0; box-sizing:border-box; }
@@ -177,9 +177,13 @@ const EVENTS = [
   }
 
   .cal{
-    max-width:1180px;
+    max-width:1400px;
     margin:0 auto;
     padding:56px 40px 72px;
+  }
+  /* laptops: trade a little side gutter for class names that fit on one line */
+  @media (max-width: 1440px){
+    .cal{ padding-left:24px; padding-right:24px; }
   }
 
   /* ---------------------------------------------------------------- header */
@@ -192,7 +196,7 @@ const EVENTS = [
   }
   .cal-head-script{
     font-family:var(--script);
-    font-size:30px;
+    font-size:38px;
     line-height:1;
     color:var(--blue);
     margin-bottom:10px;
@@ -305,6 +309,7 @@ const EVENTS = [
     width:100%;
     min-width:940px;
     border-collapse:collapse;
+    table-layout:fixed;
   }
   .studio-table thead th{
     background:var(--blue);
@@ -337,11 +342,10 @@ const EVENTS = [
     border-top:1px solid var(--line);
   }
   .studio-table tbody td{
-    padding:14px 12px;
+    padding:14px 11px;
     vertical-align:top;
     border-top:1px solid var(--line);
     border-left:1px solid var(--line-soft);
-    min-width:140px;
   }
   .studio-table tbody tr:first-child th,
   .studio-table tbody tr:first-child td{ border-top:none; }
@@ -512,7 +516,7 @@ const EVENTS = [
   }
   .empty-day .script{
     font-family:var(--script);
-    font-size:34px;
+    font-size:42px;
     color:var(--faint);
     display:block;
     margin-bottom:6px;
@@ -739,7 +743,7 @@ const EVENTS = [
   }
   .cal-foot .foot-script{
     font-family:var(--script);
-    font-size:23px;
+    font-size:29px;
     color:var(--faint);
   }
 
@@ -753,7 +757,7 @@ const EVENTS = [
   }
   @media (max-width: 620px){
     .cal{ padding:32px 16px 48px; }
-    .cal-head-script{ font-size:26px; }
+    .cal-head-script{ font-size:32px; }
     .class-row{
       grid-template-columns:1fr;
       gap:6px;
@@ -942,6 +946,64 @@ const EVENTS = [
 
     html += '</tbody></table></div>';
     document.getElementById("glance-body").innerHTML = html;
+    sizeColumns();
+  }
+
+  /* Give each day column the width its longest class name needs, so names
+     read on one line instead of wrapping like they're cut off. A name wider
+     than NAME_CAP is simply left out of the measurement and allowed to wrap
+     (e.g. "Preparatory Grade 2 / Grade 1 & Pointe 1"), rather than making its
+     whole day column wide and squeezing every other day. */
+  var NAME_CAP = 230;
+  var CELL_PAD = 26;   /* the td's left + right padding, plus a hair of slack */
+  function sizeColumns(){
+    var table = document.querySelector("#glance-body .studio-table");
+    if (!table) return;
+    var probe = document.createElement("span");
+    probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap;left:-9999px;top:0;";
+    table.parentNode.appendChild(probe);
+
+    var need = DAYS.map(function(){ return 110; });
+    var rows = table.tBodies[0].rows;
+    for (var r = 0; r < rows.length; r++){
+      for (var c = 1; c < rows[r].cells.length; c++){
+        var names = rows[r].cells[c].querySelectorAll(".se-name");
+        for (var n = 0; n < names.length; n++){
+          probe.className = "se-name";
+          probe.innerHTML = names[n].innerHTML;
+          var w = Math.ceil(probe.getBoundingClientRect().width);
+          if (w <= NAME_CAP) need[c - 1] = Math.max(need[c - 1], w + CELL_PAD);
+        }
+      }
+    }
+    probe.remove();
+
+    var colgroup = table.querySelector("colgroup");
+    if (colgroup) colgroup.remove();
+    colgroup = document.createElement("colgroup");
+    var label = document.createElement("col");
+    label.style.width = "80px";
+    colgroup.appendChild(label);
+    var total = need.reduce(function(a, b){ return a + b; }, 0);
+    need.forEach(function(w){
+      var col = document.createElement("col");
+      col.style.width = (w / total * 100).toFixed(3) + "%";
+      colgroup.appendChild(col);
+    });
+    table.insertBefore(colgroup, table.firstChild);
+
+    /* Phones and tablets already scroll this table sideways, so there give it
+       its full natural width instead of squeezing names into narrow columns. */
+    var narrow = window.matchMedia && window.matchMedia("(max-width: 860px)").matches;
+    table.style.minWidth = narrow ? (80 + total) + "px" : "";
+  }
+  if (window.matchMedia){
+    var mq = window.matchMedia("(max-width: 860px)");
+    if (mq.addEventListener) mq.addEventListener("change", sizeColumns);
+    else if (mq.addListener) mq.addListener(sizeColumns);
+  }
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){ sizeColumns(); });
   }
 
   /* ---------------- day rail + single-day list ---------------- */

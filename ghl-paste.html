@@ -781,7 +781,7 @@ const EVENTS = [
   /* ---------------------------------------------------------- site footer
      Matches the footer on the main website so every page carries the same one. */
   .sitefoot{
-    background:#111;
+    background:#08090B;
     color:rgba(255,255,255,.84);
     font-family:var(--mont);
   }
@@ -1363,7 +1363,7 @@ const EVENTS = [
       if (window.parent !== window){
         requestAnimationFrame(function(){
           window.parent.postMessage(
-            { type: "lscd-cal-height", height: document.documentElement.scrollHeight },
+            { type: "lscd-cal-height", height: Math.ceil(document.body.getBoundingClientRect().height) },
             "*"
           );
         });

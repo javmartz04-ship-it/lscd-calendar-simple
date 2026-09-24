@@ -243,7 +243,7 @@ table.studio-table{width:100%;min-width:940px;border-collapse:collapse;table-lay
 .cal-foot{margin-top:56px;padding-top:26px;border-top:1px solid var(--line);text-align:center;font-size:12.5px;letter-spacing:.04em;color:var(--muted);}
 .cal-foot a{ color:var(--ink); font-weight:600; text-decoration:none; border-bottom:1px solid var(--line); }
 .cal-foot a:hover{ color:var(--blue-deep); border-bottom-color:var(--blue); }
-.sitefoot{background:#111;color:rgba(255,255,255,.84);font-family:var(--mont);}
+.sitefoot{background:#08090B;color:rgba(255,255,255,.84);font-family:var(--mont);}
 .sitefoot a{ text-decoration:none; }
 .sf-in{max-width:1400px; margin:0 auto;padding:64px 40px 52px;display:grid;grid-template-columns:1.25fr .85fr 1.1fr;gap:48px;align-items:start;}
 .sf-logo{ display:inline-block; color:inherit; }
@@ -699,7 +699,7 @@ Copyright &copy;2026 LSCD. All rights reserved.
  if (window.parent !== window){
  requestAnimationFrame(function(){
  window.parent.postMessage(
- { type: "lscd-cal-height", height: document.documentElement.scrollHeight },
+ { type: "lscd-cal-height", height: Math.ceil(document.body.getBoundingClientRect().height) },
  "*"
  );
  });
